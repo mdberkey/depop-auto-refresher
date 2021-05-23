@@ -1,6 +1,6 @@
 """ This module allows Depop store owners to automatically refresh their listings 24/7."""
 from time import sleep
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchWindowException
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -119,13 +119,17 @@ class AutoRefresher:
                 ActionChains(driver).move_to_element(save_button).click(save_button).perform()
                 try:
                     WebDriverWait(self.driver, 3).until(EC.staleness_of(save_button))
-                    print("success")
                     break
                 except TimeoutException:
-                    print("failure")
                     continue
         if self.indefinite:
-            sleep(self.frequency)
+            print("Successfully refreshed listings.")
+            for i in range(int(self.frequency / 10)):
+                sleep(10)
+                try:
+                    driver.find_element_by_id("__next")
+                except NoSuchWindowException:
+                    break
             self.refresh_items(item_links)
         return True
 
@@ -134,14 +138,14 @@ class AutoRefresher:
         Closes chrome driver
         :return: True if successful
         """
-        sleep(10)
+        sleep(5)
         self.driver.close()
         return True
 
 
 if __name__ == "__main__":
     bot = AutoRefresher(indefinite=True, frequency=10)
-    bot.login("bob", "password")
+    bot.login("RubyJacks", "12345Wave")
     bot.move_sold_items_down()
     bot.load_all_items()
     links = bot.get_item_links()
