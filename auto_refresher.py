@@ -145,7 +145,7 @@ class AutoRefresher:
 
 if __name__ == "__main__":
     bot = AutoRefresher(indefinite=True, frequency=10)
-    bot.login("RubyJacks", "12345Wave")
+    bot.login("username", "password")
     bot.move_sold_items_down()
     bot.load_all_items()
     links = bot.get_item_links()
