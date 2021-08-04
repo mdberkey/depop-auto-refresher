@@ -46,8 +46,8 @@ class AutoRefresher:
         driver = self.driver
         wait = self.wait
         with driver:
-            move_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#main > div.Container-sc-4caz4"
-            "y-0.kgbzVC > div.styles__ProfileLinks-r941b9-8.iwqCVJ > div > button:nth-child(1)")))
+            move_button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#main > div.Container-sc-1t5af73-0.hFJMpP"
+            " > div.styles__ProfileLinks-r941b9-8.iwqCVJ > div > button:nth-child(1)")))
             move_button.click()
         return True
 
@@ -78,16 +78,13 @@ class AutoRefresher:
         with driver:
             item_list = wait.until(
                 EC.visibility_of_all_elements_located((By.CSS_SELECTOR, "#products-tab > div > ul > li > a")))
-            sold_amt = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#main > div.Container-sc-4caz4y-0"
-            ".kgbzVC > div.styles__UserInformationContainer-r941b9-0.eVIAga > div.styles__UserDetailsContainer-r941b9-2"
-            ".ifmZmy > div.TrustSignalsstyles__Signals-y0jgqp-0.eEPKFu > div:nth-child(1) > span")))
+            sold_amt = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#main > div.Container-sc-1t5af73-0.hFJMpP"
+            " > div.styles__UserInformationContainer-r941b9-0.eVIAga > div.styles__UserDetailsContainer-r941b9-2.ifmZmy"
+            " > div.TrustSignalsstyles__Signals-y0jgqp-0.eEPKFu > div:nth-child(1) > p")))
             sold_amt = int(sold_amt.text.split()[0])
 
             for item in item_list:
-                item.get_attribute(
-                    "#main > div.Container-sc-4caz4y-0.kgbzVC > div.styles__UserInformationContainer-r941b9-0.eVIAga > "
-                    "div.styles__UserDetailsContainer-r941b9-2.ifmZmy > div.TrustSignalsstyles__Signals-y0jgqp-0.eEPKFu"
-                    " > div:nth-child(1) > span")
+                item.get_attribute("#products-tab > div > ul > li:nth-child(3) > a")
                 split_link = item.get_attribute("href").split("/products/")
                 edit_link = "https://www.depop.com/products/edit/" + split_link[1]
                 item_links.append(edit_link)
@@ -142,11 +139,18 @@ class AutoRefresher:
         self.driver.close()
         return True
 
+    def accept_cookies(self):
+        driver = self.driver
+        wait = self.wait
+        button = wait.until(EC.visibility_of_element_located((By.CSS_SELECTOR, "#__next > div.sc-kEYyzF.kzcxAl > div.sc-iAyFgw.JSbHK > button.sc-gZMcBi.sc-gqjmRU.sc-eHgmQL.jDewdN"))) 
+        ActionChains(driver).move_to_element(button).click(button).perform()
+
 
 if __name__ == "__main__":
     bot = AutoRefresher(indefinite=True, frequency=10)
     bot.login("username", "password")
     bot.move_sold_items_down()
+    #bot.accept_cookies()
     bot.load_all_items()
     links = bot.get_item_links()
     bot.refresh_items(links)
